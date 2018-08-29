@@ -1,0 +1,26 @@
+/**
+ * @(#)Constants.java 01-00 2014/05/12.
+ *
+ * Copyright(C) 2014 by FUJINET CO., LTD.
+ *
+ * Last_Update 2014/05/12
+ * Version 1.00.
+ */
+package fjs.cs.common;
+
+/**
+ * Class chua thong tin constant
+ *
+ * @author TIEN-NTM
+ * @version 1.00
+ */
+public class Constants {
+
+	/* List Man Hinh */
+	// T001(Login)
+	public static final String T001_LOGIN = "/WebContent/jsp/T001.jsp";
+	// T002(Search)
+	public static final String T002_SEARCH = "/WebContent/jsp/T002.jsp";
+	// T002(Edit)
+	public static final String T003_EDIT = "/WebContent/jsp/T003.jsp";
+}
