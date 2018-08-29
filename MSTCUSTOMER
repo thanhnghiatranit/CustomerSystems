@@ -1,0 +1,145 @@
+package fjs.cs.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+public abstract class MSTCUSTOMER implements Comparable<MSTCUSTOMER> {
+	String customer_ID;
+	String customer_Name;
+	String sex;
+	String birthday;
+	String email;
+	String address;
+	Date delete_YMD;
+	Date insert_YMD;
+	String insert_PSN_CD;
+	Date update_YMD;
+	String update_PSN_CD;
+
+	public MSTCUSTOMER() {
+		customer_Name = "";
+		sex = "";
+		birthday = "";
+	}
+
+	public MSTCUSTOMER(String customer_ID, String customer_Name, String sex,
+			String birthday, String email, String address, Date delete_YMD,
+			Date insert_YMD, String insert_PSN_CD, Date update_YMD,
+			String update_PSN_CD) {
+		this.customer_ID = customer_ID;
+		this.customer_Name = customer_Name;
+		this.sex = sex;
+		this.birthday = birthday;
+		this.email = email;
+		this.address = address;
+		this.delete_YMD = delete_YMD;
+		this.insert_YMD = insert_YMD;
+		this.insert_PSN_CD = insert_PSN_CD;
+		this.update_YMD = update_YMD;
+		this.update_PSN_CD = update_PSN_CD;
+	}
+
+	public String getCustomer_ID() {
+		return customer_ID;
+	}
+
+	public void setCustomer_ID(String customer_ID) {
+		this.customer_ID = customer_ID;
+	}
+
+	public String getCustomer_Name() {
+		return customer_Name;
+	}
+
+	public void setCustomer_Name(String customer_Name) {
+		this.customer_Name = customer_Name;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public String getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public Date getDelete_YMD() {
+		return delete_YMD;
+	}
+
+	public void setDelete_YMD(Date delete_YMD) {
+		this.delete_YMD = delete_YMD;
+	}
+
+	public Date getInsert_YMD() {
+		return insert_YMD;
+	}
+
+	public void setInsert_YMD(Date insert_YMD) {
+		this.insert_YMD = insert_YMD;
+	}
+
+	public String getInsert_PSN_CD() {
+		return insert_PSN_CD;
+	}
+
+	public void setInsert_PSN_CD(String insert_PSN_CD) {
+		this.insert_PSN_CD = insert_PSN_CD;
+	}
+
+	public Date getUpdate_YMD() {
+		return update_YMD;
+	}
+
+	public void setUpdate_YMD(Date update_YMD) {
+		this.update_YMD = update_YMD;
+	}
+
+	public String getUpdate_PSN_CD() {
+		return update_PSN_CD;
+	}
+
+	public void setUpdate_PSN_CD(String update_PSN_CD) {
+		this.update_PSN_CD = update_PSN_CD;
+	}
+
+	@Override
+	public String toString() {
+		return "MSTCUSTOMER [customer_ID=" + customer_ID + ", customer_Name="
+				+ customer_Name + ", sex=" + sex + ", birthday=" + birthday
+				+ ", email=" + email + ", address=" + address + ", delete_YMD="
+				+ delete_YMD + ", insert_YMD=" + insert_YMD
+				+ ", insert_PSN_CD=" + insert_PSN_CD + ", update_YMD="
+				+ update_YMD + ", update_PSN_CD=" + update_PSN_CD + "]";
+	}
+
+	@Override
+	public int compareTo(MSTCUSTOMER that) {
+		return this.customer_ID.compareTo(that.customer_ID);
+	}
+
+}
