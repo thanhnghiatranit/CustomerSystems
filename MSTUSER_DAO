@@ -1,0 +1,64 @@
+package fjs.cs.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import fjs.cs.common.JdbcSQLServerConnection;
+
+public class MSTUSER_DAO {
+
+	public static boolean validate(String username, String password) {
+
+		
+		int totalRecord=0;
+		try {
+			
+			//ket noi csdl
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			Connection conn=DriverManager.getConnection("jdbc:sqlserver://localhost:1433;" + "databaseName=CustomerSystem","sa", "Abc12345");
+		
+			String sql="SELECT * FROM MSTUSER WHERE USERID=? AND PASSWORD=?";
+			//tao cau lenh lay id va pass
+			PreparedStatement ps=conn.prepareStatement(sql);
+			
+			//truyen tham so
+			ps.setString(1,username);  
+			ps.setString(2,password); 
+			
+			//tra ket qua thuc thi cau lenh sql
+			ResultSet rs=ps.executeQuery();  
+			while(rs.next()){
+				totalRecord++;
+			}
+			conn.close();
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return totalRecord > 0 ? true : false;
+	}
+
+	public static void main(String[] args) {
+//		 try {
+//		 // connnect to database 'testdb'
+//		 Connection conn = JdbcSQLServerConnection.getConnection();
+//		 // crate statement
+//		 Statement stmt = conn.createStatement();
+//		 // get data from table 'student'
+//		 ResultSet rs = stmt.executeQuery("select * from MSTUSER");
+//		 // show data
+//		 while (rs.next()) {
+//		 System.out.println(rs.getInt(1) + "  " + rs.getString(2)
+//		 + "  " + rs.getString(3));
+//		 }
+//		 // close connection
+//		 conn.close();
+//		 } catch (Exception ex) {
+//		 ex.printStackTrace();
+//		 }
+	}
+}
