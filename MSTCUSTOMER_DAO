@@ -1,0 +1,295 @@
+MSTCUSTOMER_DAO
+package fjs.cs.dao;
+
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import fjs.cs.common.JdbcSQLServerConnection;
+import fjs.cs.common.Utils;
+
+public class MSTCUSTOMER_DAO {
+
+	// ham lay ra 1 customer de hien thi len table
+	public ArrayList<MSTCUSTOMER> getListCustomer() {
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		String sql = "SELECT * FROM MSTCUSTOMER";
+		ArrayList<MSTCUSTOMER> list = new ArrayList<MSTCUSTOMER>();
+		try {
+			PreparedStatement ps = (PreparedStatement) conn
+					.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				MSTCUSTOMER mstcustomer = new MSTCUSTOMER() {
+				};
+				// lay du lieu tu data vao bang
+				// "ten cot trong bang data"
+				mstcustomer.setCustomer_ID(rs.getString("CUSTOMER_ID"));
+				mstcustomer.setCustomer_Name(rs.getString("CUSTOMER_NAME"));
+				mstcustomer.setSex(rs.getString("SEX"));
+				mstcustomer.setBirthday(rs.getString("BIRTHDAY"));
+				mstcustomer.setAddress(rs.getString("ADDRESS"));
+				list.add(mstcustomer);
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	// ham search
+	public static ArrayList<MSTCUSTOMER> getSearch(String cusname,
+			String cussex, String cusbirthdayFrom, String cusbirthdayTo) {
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		ArrayList<MSTCUSTOMER> list = new ArrayList<MSTCUSTOMER>();
+		try {
+			StringBuilder sql = new StringBuilder();
+
+			sql.append("SELECT * FROM MSTCUSTOMER WHERE ");
+			// WHERE CUSTOMER_NAME LIKE ? OR SEX = ? OR BIRTHDAY LIKE ?";
+
+			if (!"".equals(cusname)) {
+				sql.append("CUSTOMER_NAME LIKE ? ");
+			} else if (!"".equals(cusname) && !"".equals(cussex)) {
+				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? ");
+			} else if ((!"".equals(cusname))
+					&& (!"".equals(cussex))
+					&& (!"".equals(cusbirthdayFrom) && !""
+							.equals(cusbirthdayTo))) {
+				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? AND BIRTHDAY = ? ");
+			} else if ("".equals(cusname) && "".equals(cussex)
+					&& "".equals(cusbirthdayFrom) && "".equals(cusbirthdayTo)) {
+				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? AND BIRTHDAY >= ? AND BIRTHDAY <= ? ");
+			}
+			PreparedStatement ps = (PreparedStatement) conn
+					.prepareStatement(sql.toString());
+			if (!"".equals(cusname)) {
+				ps.setString(1, "%" + cusname + "%");
+			} else if (!"".equals(cusname) && !"".equals(cussex)) {
+			} else if ((!"".equals(cusname)) && (!"".equals(cussex))
+					&& (!"".equals(cusbirthdayFrom) && (!"".equals(cusbirthdayTo)))) {
+				ps.setString(1, "%" + cusname + "%");
+				ps.setString(2, "%" + cussex + "%");
+				ps.setString(3,cusbirthdayFrom);
+				ps.setString(4, cusbirthdayTo);
+
+			}
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				MSTCUSTOMER mstcustomer = new MSTCUSTOMER() {
+				};
+				mstcustomer.setCustomer_ID((rs.getString("CUSTOMER_ID")));
+				mstcustomer.setCustomer_Name(rs.getString("CUSTOMER_NAME"));
+				mstcustomer.setSex(rs.getString("SEX"));
+				mstcustomer.setBirthday(rs.getString("BIRTHDAY"));
+				mstcustomer.setEmail(rs.getString("EMAIL"));
+				mstcustomer.setAddress(rs.getString("ADDRESS"));
+				mstcustomer.setDelete_YMD(rs.getDate("DELETE_YMD"));
+				mstcustomer.setInsert_YMD(rs.getDate("INSERT_YMD"));
+				mstcustomer.setUpdate_YMD(rs.getDate("UPDATE_YMD"));
+				list.add(mstcustomer);
+
+			}
+
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+
+	}
+
+	// ham lay 1 customer theo id de hien thi o trang edit
+	public ArrayList<MSTCUSTOMER> getListCustomerByID(String id) {
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		String sql = "SELECT * FROM MSTCUSTOMER WHERE CUSTOMER_ID=?";
+		ArrayList<MSTCUSTOMER> list = new ArrayList<MSTCUSTOMER>();
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+
+			ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				MSTCUSTOMER mstcustomer = new MSTCUSTOMER() {
+				};
+				mstcustomer.setCustomer_ID((rs.getString("CUSTOMER_ID")));
+				mstcustomer.setCustomer_Name(rs.getString("CUSTOMER_NAME"));
+				mstcustomer.setSex(rs.getString("SEX"));
+				mstcustomer.setBirthday(rs.getString("BIRTHDAY"));
+				mstcustomer.setAddress(rs.getString("ADDRESS"));
+				mstcustomer.setEmail(rs.getString("EMAIL"));
+				mstcustomer.setDelete_YMD(rs.getDate("DELETE_YMD"));
+				mstcustomer.setInsert_YMD(rs.getDate("INSERT_YMD"));
+				mstcustomer.setUpdate_YMD(rs.getDate("UPDATE_YMD"));
+				list.add(mstcustomer);
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+
+	}
+
+	public static boolean DeleteByID(String id) {
+
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		String sql = "DELETE FROM MSTCUSTOMER WHERE CUSTOMER_ID=?";
+		PreparedStatement ps;
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			if (ps.executeUpdate() != 0)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+
+	public static boolean AddNew(MSTCUSTOMER mstcustomer) {
+		try {
+			Connection conn = JdbcSQLServerConnection.getConnection();
+			String sql = "INSERT INTO MSTCUSTOMER(CUSTOMER_NAME, SEX, ADDRESS, BIRTHDAY, EMAIL) VALUES(?,?,?,?,?)";
+			// "INSERT INTO MSTCUSTOMER(CUSTOMER_NAME, SEX, ADDRESS) VALUES(?,?,?)";
+			PreparedStatement ps = (PreparedStatement) conn
+					.prepareStatement(sql);
+
+			ps.setString(1, mstcustomer.getCustomer_Name());
+			ps.setString(2, mstcustomer.getSex());
+			ps.setString(3, mstcustomer.getAddress());
+			ps.setString(4, mstcustomer.getBirthday());
+			ps.setString(5, mstcustomer.getEmail());
+			// ps.setDate(6, cus.getD_updateYMD());
+			// ps.setDate(7, cus.getD_insertYMD());
+			// ps.setDate(8, cus.getD_deleteYMD());
+
+			if (ps.executeUpdate() != 0)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+
+		}
+
+	}
+
+	// phan trang
+	// Pages number 1->4 or 5->8 ..
+	public ArrayList<MSTCUSTOMER> getCustomerPT(int start, int sl) {
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		ArrayList<MSTCUSTOMER> list = new ArrayList();
+		String sql = "SELECT * FROM MSTCUSTOMER ORDER BY CUSTOMER_ID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, start);
+			ps.setInt(2, sl);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				MSTCUSTOMER mstcustomer = new MSTCUSTOMER() {
+				};
+				mstcustomer.setCustomer_ID(rs.getString("CUSTOMER_ID"));
+				mstcustomer.setCustomer_Name(rs.getString("CUSTOMER_NAME"));
+				mstcustomer.setSex(rs.getString("SEX"));
+				mstcustomer.setBirthday(rs.getString("BIRTHDAY"));
+				mstcustomer.setAddress(rs.getString("ADDRESS"));
+				list.add(mstcustomer);
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+
+	}
+
+	// ham dem id trong bang
+	public int getCount() {
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		ArrayList<MSTCUSTOMER> list = new ArrayList();
+		String sql = "SELECT count(CUSTOMER_ID) FROM MSTCUSTOMER";
+		int count = 0;
+		try {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	// test
+	public static void main(String[] args) {
+		MSTCUSTOMER_DAO dao = new MSTCUSTOMER_DAO();
+
+		//
+		// if (dao.DeleteByID("11010013"))
+		// System.out.println("ok");
+		// else
+		// System.out.println("not ok");
+
+		// CUSTOMER_NAME, SEX, ADDRESS,
+		// BIRHDAY, EMAIL, UPDATEYMD, INSERTYMD, DELETEYMD
+
+		// for (MSTCUSTOMER mstcustomer : dao.getSearch("Nguyen")) {
+		// System.out.println(mstcustomer.toString());
+		// }
+		//
+		// if (dao.getSearch("nguyen", "male", "1992/02/03") != null)
+		// System.out.println("ok");
+		//
+		// else
+		// System.out.println("not ok");
+		// }
+		/*
+		 * for (MSTCUSTOMER cus : dao.GetCustomerPT(1, 2)) {
+		 * System.out.println(cus.toString()); }
+		 */
+		// try {
+		// connnect to database 'testdb'
+		// Connection conn = JdbcSQLServerConnection.getConnection();
+		// crate statement
+		// Statement stmt = conn.createStatement();
+		// get data from table 'student'
+
+		// "SELECT * FROM MSTCUSTOMER WHERE CUSTOMER_NAME LIKE '%Nguyen%' AND SEX ='male' AND BIRTHDAY LIKE '%%'";
+		// ResultSet rs = stmt.executeQuery(sql);
+
+		// show data
+		// while (rs.next()) {
+		// System.out.println(rs.getString(1) + "  " + rs.getString(2)
+		// + "  " + rs.getString(3) + "  " + rs.getString(4)
+		// + "  " + rs.getString(5) + "  " + rs.getString(6));
+
+		// }
+		//
+		// close connection
+		// conn.close();
+		// } catch (Exception ex) {
+		// ex.printStackTrace();
+		// }
+		//
+
+	}
+}
