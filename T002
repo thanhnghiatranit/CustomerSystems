@@ -1,0 +1,148 @@
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.util.List"%>
+<%@page import="java.sql.ResultSet"%>
+<%@page import="javax.swing.JInternalFrame.JDesktopIcon"%>
+<%@page import="fjs.cs.dao.MSTCUSTOMER_DAO"%>
+<%@page import="fjs.cs.dao.MSTCUSTOMER"%>
+<%@page import="java.io.PrintWriter"%>
+<%@page import="fjs.cs.common.JdbcSQLServerConnection"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.Statement"%>
+<%@page import="java.sql.Connection"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>T002_Search</title>
+</head>
+<head>
+<title>Bootstrap Example</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th,td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+	background-color: #ffffff;
+}
+</style>
+
+<script type="text/javascript" src="WebContent/js/error.js"></script>
+<%
+	List<MSTCUSTOMER> listCustomer = new ArrayList<MSTCUSTOMER>();
+	if (null != session.getAttribute("listCustomer")) {
+		listCustomer = (List<MSTCUSTOMER>) session
+				.getAttribute("listCustomer");
+	}
+%>
+<body style="background: #66ffff">
+
+	<div class="container">
+		<h2 style="color: red;">Training</h2>
+		<hr>
+		<p>Login > Search Customer</p>
+
+		<form class="form-group" action="Login" method="post" name="myform">
+			<div class="form-group">
+				<div class="col-sm">
+					Welcome:
+					<%=session.getAttribute("txtUserID")%>
+				</div>
+
+				<input type="hidden" id="mode" name="mode" value="logout">
+				 <input	type="submit" value="Logout"><br> <input
+					class="form-control input-sm"
+					style="background: blue; margin-bottom: 20px"></input>
+
+			</div>
+		</form>
+		<form class="form-group" action="Search" method="post" id="myformSearch">
+			<div class="form-group" style="background: #ffff33">
+				<label id="llbCustomername">Customer name:</label>
+				 <input	id="txtsearchName" name="txtsearchName" type="text" value="<%=session.getAttribute("CUSNAME")%>" /> 
+				 <label>Sex</label>
+				  <select id="llbSex" name="llbSex">
+					<option value=""></option>
+					<option value="Male">Male</option>
+					<option value="Female">Female</option>
+				</select>
+
+				<!-- 				<div class="col-sm-5"> -->
+				<label>Birthday:</label>
+				<input id="txtBirthdayFrom">~<input id="txtBirthdayTo"> 
+				<input id="mode" type="hidden" name="mode" value="searchname">
+				 <input id="btnSearch" name="btnSearch" type="button" class="btn" onclick="SearchName()" value="Search"/>
+			</div>
+
+			<table id="myTable" class="display">
+				<thead>
+					<tr>
+						<th><input type="checkbox" name="checkbox"
+							onClick="toggle(this)" value="checkbox" onClick="toggle()"></th>
+						<th>Customer ID</th>
+						<th>Customer Name</th>
+						<th>Sex</th>
+						<th>Birthday</th>
+						<th>Address</th>
+					</tr>
+				</thead>
+				<tbody>
+					<%
+						for (MSTCUSTOMER customer : listCustomer) {
+					%>
+					<tr>
+						<td><input onclick="checkedFunction(this)" type="checkbox"
+							name="check_list" class="styled"
+							value="<%=customer.getCustomer_ID()%>"
+							id="<%=customer.getCustomer_ID()%>"></td>
+						<td><a
+							href="WebContent/jsp/T003.jsp?mode=view&id=<%=customer.getCustomer_ID()%>">
+								<%=customer.getCustomer_ID()%>
+						</a></td>
+						<td><%=customer.getCustomer_Name()!=null?customer.getCustomer_Name():""%></td>
+						<td><%=customer.getSex()!=null?customer.getSex():""%></td>
+						<td><%=customer.getBirthday()!=null?customer.getBirthday():""%></td>
+						<td><%=customer.getAddress()!=null?customer.getAddress():""%></td>
+					</tr>
+				</tbody>
+				<%
+					}
+				%>
+			</table>
+
+		</form>
+		
+		<form action="Search" method="post" id="myFormDelete">
+			<input hidden name="listDelete" id="customerId">
+			 <input	name="mode" id="mode" hidden value="delete">
+			<button name="btnDelete" class="btn" onclick="ErrorDelete()">Delete</button>
+		</form>
+
+		<form action="Search" method="post">
+			<input name="mode" hidden id="mode" value="addnew">
+			<button id="btnAddnew" class="btn" type="submit">Add New</button>
+		</form>
+
+	</div>
+</body>
+
+</html>
