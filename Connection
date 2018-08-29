@@ -1,0 +1,30 @@
+package fjs.cs.common;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class JdbcSQLServerConnection {
+
+	private static String dbURL = "jdbc:sqlserver://localhost:1433;"
+			+ "databaseName=CustomerSystem";
+	private static String userName = "sa";
+	private static String password = "Abc12345";
+
+	   public static Connection getConnection() {
+	        Connection conn = null;
+	        try {
+	        	//khai bao class Driver
+	            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	            conn = DriverManager.getConnection(dbURL, userName, password);
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        return conn;
+	    }
+	public static void main(String[] args) {
+		System.out.println(getConnection());
+		
+	}
+}
