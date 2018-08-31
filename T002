@@ -46,7 +46,7 @@ tr:nth-child(even) {
 }
 </style>
 
-<script type="text/javascript" src="WebContent/js/error.js"></script>
+
 <%
 	List<MSTCUSTOMER> listCustomer = new ArrayList<MSTCUSTOMER>();
 	if (null != session.getAttribute("listCustomer")) {
@@ -68,36 +68,37 @@ tr:nth-child(even) {
 					<%=session.getAttribute("txtUserID")%>
 				</div>
 
-				<input type="hidden" id="mode" name="mode" value="logout">
-				 <input	type="submit" value="Logout"><br> <input
+				<input type="hidden" id="mode" name="mode" value="logout"> <input
+					type="submit" value="Logout"><br> <input
 					class="form-control input-sm"
 					style="background: blue; margin-bottom: 20px"></input>
 
 			</div>
 		</form>
-		<form class="form-group" action="Search" method="post" id="myformSearch">
+		<form class="form-group" action="Search" method="post"
+			id="myformSearch">
 			<div class="form-group" style="background: #ffff33">
-				<label id="llbCustomername">Customer name:</label>
-				 <input	id="txtsearchName" name="txtsearchName" type="text" value="<%=session.getAttribute("CUSNAME")%>" /> 
-				 <label>Sex</label>
-				  <select id="llbSex" name="llbSex">
-					<option value=""></option>
-					<option value="Male">Male</option>
-					<option value="Female">Female</option>
-				</select>
-
-				<!-- 				<div class="col-sm-5"> -->
-				<label>Birthday:</label>
-				<input id="txtBirthdayFrom">~<input id="txtBirthdayTo"> 
-				<input id="mode" type="hidden" name="mode" value="searchname">
-				 <input id="btnSearch" name="btnSearch" type="button" class="btn" onclick="SearchName()" value="Search"/>
+				<label id="llbCustomername">Customer name:</label> <input
+					id="txtsearchName" name="txtsearchName" type="text"
+					value="<%=session.getAttribute("CUSNAME")%>" /> <label>Sex</label>
+				<select id="llbSex" name="llbSex" selected="selected">
+					<option></option>
+					<option value="0">Male</option>
+					<option value="1">Female</option>
+				</select> <label>Birthday:</label> <input id="txtBirthdayFrom"
+					name="txtBirthdayFrom"
+					value="<%=session.getAttribute("CUSBIRTHDAY")%>">~<input
+					id="txtBirthdayTo" name="txtBirthdayTo" value=""> <input
+					id="mode" type="hidden" name="mode" value="searchname"> <input
+					id="btnSearch" name="btnSearch" type="button" class="btn"
+					onclick="SearchName()" value="Search" />
 			</div>
 
 			<table id="myTable" class="display">
 				<thead>
 					<tr>
 						<th><input type="checkbox" name="checkbox"
-							onClick="toggle(this)" value="checkbox" onClick="toggle()"></th>
+							onClick="toggle(this)" value="checkbox"></th>
 						<th>Customer ID</th>
 						<th>Customer Name</th>
 						<th>Sex</th>
@@ -118,10 +119,14 @@ tr:nth-child(even) {
 							href="WebContent/jsp/T003.jsp?mode=view&id=<%=customer.getCustomer_ID()%>">
 								<%=customer.getCustomer_ID()%>
 						</a></td>
-						<td><%=customer.getCustomer_Name()!=null?customer.getCustomer_Name():""%></td>
-						<td><%=customer.getSex()!=null?customer.getSex():""%></td>
-						<td><%=customer.getBirthday()!=null?customer.getBirthday():""%></td>
-						<td><%=customer.getAddress()!=null?customer.getAddress():""%></td>
+						<td><%=customer.getCustomer_Name() != null ? customer
+						.getCustomer_Name() : ""%></td>
+						<td><%=(customer.getSex() != null) && (customer.getSex().equals("0"))? "Male": "Female"%></td>
+						<td><%=customer.getBirthday() != null ? customer
+						.getBirthday() : ""%></td>
+						<td><%=customer.getAddress() != null ? customer.getAddress()
+						: ""%></td>
+
 					</tr>
 				</tbody>
 				<%
@@ -129,20 +134,28 @@ tr:nth-child(even) {
 				%>
 			</table>
 
-		</form>
-		
-		<form action="Search" method="post" id="myFormDelete">
-			<input hidden name="listDelete" id="customerId">
-			 <input	name="mode" id="mode" hidden value="delete">
-			<button name="btnDelete" class="btn" onclick="ErrorDelete()">Delete</button>
-		</form>
 
-		<form action="Search" method="post">
-			<input name="mode" hidden id="mode" value="addnew">
-			<button id="btnAddnew" class="btn" type="submit">Add New</button>
 		</form>
+		<div class="row">
+			<div class="col-sm-2">
+				<form action="Search" method="post">
+					<input name="mode" hidden id="mode" value="addnew">
+					<button id="btnAddnew" class="btn btn-primary" type="submit">Add
+						New</button>
+				</form>
+			</div>
+			<div class="col-sm-2">
+				<form action="Search" method="post" id="myFormDelete">
+					<input hidden name="listDelete" id="customerId"> <input
+						name="mode" id="mode" hidden value="delete">
+					<button name="btnDelete" class="btn btn-primary"
+						onclick="ErrorDelete()">Delete</button>
 
+				</form>
+			</div>
+
+		</div>
 	</div>
 </body>
-
+<script type="text/javascript" src="WebContent/js/error.js"></script>
 </html>
