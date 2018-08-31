@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -55,35 +55,72 @@ public class MSTCUSTOMER_DAO {
 		try {
 			StringBuilder sql = new StringBuilder();
 
+			// search all
 			sql.append("SELECT * FROM MSTCUSTOMER WHERE ");
-			// WHERE CUSTOMER_NAME LIKE ? OR SEX = ? OR BIRTHDAY LIKE ?";
-
+			// search co ten
 			if (!"".equals(cusname)) {
 				sql.append("CUSTOMER_NAME LIKE ? ");
-			} else if (!"".equals(cusname) && !"".equals(cussex)) {
-				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? ");
-			} else if ((!"".equals(cusname))
-					&& (!"".equals(cussex))
-					&& (!"".equals(cusbirthdayFrom) && !""
-							.equals(cusbirthdayTo))) {
-				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? AND BIRTHDAY = ? ");
-			} else if ("".equals(cusname) && "".equals(cussex)
-					&& "".equals(cusbirthdayFrom) && "".equals(cusbirthdayTo)) {
-				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? AND BIRTHDAY >= ? AND BIRTHDAY <= ? ");
+				// dieu kien ko ten "", co gioi tinh
+			} else if ("".equals(cusname) && !"".equals(cussex)) {
+				sql.append(" SEX = ? ");
 			}
+			// dieu kien ko ten, ko gioi tinh, co birthdayfrom
+			else if ("".equals(cusname) && "".equals(cussex)
+					&& !"".equals(cusbirthdayFrom)) {
+				sql.append(" BIRTHDAY = ? ");
+			}
+			// dieu kien co ten va co gioi tinh
+			else if (!"".equals(cusname) && !"".equals(cussex)) {
+				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? ");
+			}
+			//dieu kien co gioi tinh, co birthdayfrom
+			else if (!"".equals(cussex) && !"".equals(cusbirthdayFrom)) {
+				sql.append(" SEX = ? AND BIRTHDAY = ?");
+			}
+			// dieu kien nhap co ten, co gioi tinh, co birthdayfrom
+			else if ((!"".equals(cusname)) && (!"".equals(cussex))
+					&& (!"".equals(cusbirthdayFrom))) {
+				sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? AND BIRTHDAY = ? ");
+			}
+
+			// else if ("".equals(cusname) && "".equals(cussex)
+			// && "".equals(cusbirthdayFrom) && "".equals(cusbirthdayTo)) {
+			// sql.append("CUSTOMER_NAME LIKE ? AND SEX = ? AND BIRTHDAY >= ? AND BIRTHDAY <= ? ");
+			// }
+
 			PreparedStatement ps = (PreparedStatement) conn
 					.prepareStatement(sql.toString());
+			// kq co ten
 			if (!"".equals(cusname)) {
 				ps.setString(1, "%" + cusname + "%");
-			} else if (!"".equals(cusname) && !"".equals(cussex)) {
-			} else if ((!"".equals(cusname)) && (!"".equals(cussex))
-					&& (!"".equals(cusbirthdayFrom) && (!"".equals(cusbirthdayTo)))) {
-				ps.setString(1, "%" + cusname + "%");
-				ps.setString(2, "%" + cussex + "%");
-				ps.setString(3,cusbirthdayFrom);
-				ps.setString(4, cusbirthdayTo);
-
 			}
+			// kq ko ten, co gioi tinh
+			else if ("".equals(cusname) && !"".equals(cussex)) {
+				ps.setString(1, cussex);
+			}
+			// kq ko ten, ko gioi tinh, co birthday
+			else if ("".equals(cusname) && "".equals(cussex)
+					&& !"".equals(cusbirthdayFrom)) {
+				ps.setString(1, cusbirthdayFrom);
+			}
+			// kq co ten co gioi tinh
+			else if (!"".equals(cusname) && !"".equals(cussex)) {
+				ps.setString(1, "%" + cusname + "%");
+				ps.setString(2, cussex);
+			} 
+			//kq co gioi tinh, co birthdayfrom
+			else if (!"".equals(cussex) && !"".equals(cusbirthdayFrom)) {
+				ps.setString(1, cussex);
+				ps.setString(2, cusbirthdayFrom);
+			} 
+			//kq co ten, co gioi tinh, co birthdayfrom
+			else if ((!"".equals(cusname)) && (!"".equals(cussex))
+					&& (!"".equals(cusbirthdayFrom))) {
+				ps.setString(1, "%" + cusname + "%");
+				ps.setString(2, cussex);
+				ps.setString(3, cusbirthdayFrom);
+			}
+
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -175,9 +212,9 @@ public class MSTCUSTOMER_DAO {
 			ps.setString(3, mstcustomer.getAddress());
 			ps.setString(4, mstcustomer.getBirthday());
 			ps.setString(5, mstcustomer.getEmail());
-			// ps.setDate(6, cus.getD_updateYMD());
-			// ps.setDate(7, cus.getD_insertYMD());
-			// ps.setDate(8, cus.getD_deleteYMD());
+			// ps.setDate(6,mstcustomer.getDelete_YMD());
+			// ps.setDate(7,mstcustomer.getInsert_YMD());
+			// ps.setDate(8, mstcustomer.getUpdate_YMD());
 
 			if (ps.executeUpdate() != 0)
 				return true;
@@ -239,7 +276,18 @@ public class MSTCUSTOMER_DAO {
 		return count;
 	}
 
-	// test
+	public ArrayList<MSTCUSTOMER> pagination(String query, long maxResult,
+			long firstResult) {
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		ArrayList<MSTCUSTOMER> list = new ArrayList();
+		// List list2 = MSTCUSTOMER.pagination(query, maxResult, firstResult);
+		ArrayList<MSTCUSTOMER> result = new ArrayList<MSTCUSTOMER>();
+		for (Object object : list) {
+			result.add((MSTCUSTOMER) object);
+		}
+		return result;
+	}
+
 	public static void main(String[] args) {
 		MSTCUSTOMER_DAO dao = new MSTCUSTOMER_DAO();
 
@@ -292,4 +340,6 @@ public class MSTCUSTOMER_DAO {
 		//
 
 	}
+
 }
+
