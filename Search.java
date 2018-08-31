@@ -36,30 +36,33 @@ public class Search extends HttpServlet {
 		cussex = Utils.nullToBlank(cussex);
 		cusbirthdayFrom = Utils.nullToBlank(cusbirthdayFrom);
 		cusbirthdayTo = Utils.nullToBlank(cusbirthdayTo);
-		// Luu dieu kien search vao session
 
+		// Luu dieu kien search vao session
 		session.setAttribute("CUSNAME", cusname);
 		session.setAttribute("CUSSEX", cussex);
 		session.setAttribute("CUSBIRTHDAY", cusbirthdayFrom);
 		session.setAttribute("CUSBIRTHDAY", cusbirthdayTo);
-
-		// get session dieu kien search
-		// MSTCUSTOMER dkSearch = (MSTCUSTOMER)
-		// session.getAttribute("DKSearch");
-
-		// Search voi dieu kien search
+		/*
+		 * get session dieu kien search MSTCUSTOMER dkSearch = (MSTCUSTOMER)
+		 * session.getAttribute("DKSearch"); Search voi dieu kien search
+		 */
 
 		MSTCUSTOMER_DAO dao = new MSTCUSTOMER_DAO();
 		List<MSTCUSTOMER> listCustomer = new ArrayList<MSTCUSTOMER>();
-		 listCustomer = dao.getListCustomer();
+		//hien thi data
+		listCustomer = dao.getListCustomer();
 		MSTCUSTOMER mst = new MSTCUSTOMER() {
 		};
+		// set data
 		mst.setCustomer_Name(cusname);
-		mst.setCustomer_Name(cussex);
-		mst.setCustomer_Name(cusbirthdayFrom);
-		mst.setCustomer_Name(cusbirthdayTo);
+		mst.setSex(cussex);
+		mst.setBirthday(cusbirthdayFrom);
+		mst.setBirthday(cusbirthdayTo);
 
 		session.setAttribute("listCustomer", listCustomer);
+
+	
+
 		// Hien thi man hinh Search
 		myRD = req.getRequestDispatcher(Constants.T002_SEARCH);
 		myRD.forward(req, resp);
@@ -71,25 +74,36 @@ public class Search extends HttpServlet {
 		RequestDispatcher myRD = null;
 		MSTCUSTOMER_DAO dao = new MSTCUSTOMER_DAO();
 		String mode = req.getParameter("mode");
-		
-		if (mode.equals("searchname")) {
-			HttpSession session = req.getSession();
 
+		if (mode.equals("searchname")) {
+			// tao session
+			HttpSession session = req.getSession();
+			// tao 1 danh sach cus
 			List<MSTCUSTOMER> list = new ArrayList<MSTCUSTOMER>();
 			String cusname = req.getParameter("txtsearchName");
 			String cussex = req.getParameter("llbSex");
 			String cusbirthdayFrom = req.getParameter("txtBirthdayFrom");
 			String cusbirthdayTo = req.getParameter("txtBirthdayTo");
-			
-			list = MSTCUSTOMER_DAO.getSearch(cusname, cussex, cusbirthdayFrom,cusbirthdayTo);
+			// dieu kien hien thi tat ca khi chua search
 
+			if (cusname.equals("") && cussex.equals("")
+					&& cusbirthdayFrom.equals("") && cusbirthdayTo.equals("")) {
+				list = dao.getListCustomer();
+			}
+
+			if (!"".equals(cusname) || !"".equals(cussex)
+					|| !"".equals(cusbirthdayFrom) || !"".equals(cusbirthdayTo)) {
+				System.out.println(cussex);
+				list = MSTCUSTOMER_DAO.getSearch(cusname, cussex,
+						cusbirthdayFrom, cusbirthdayTo);
+			}
+
+			// gan danh sach vao sesion
 			session.setAttribute("listCustomer", list);
-			// System.out.println(session.toString());
-			// resp.sendRedirect("Search");
 			myRD = req.getRequestDispatcher(Constants.T002_SEARCH);
 			myRD.forward(req, resp);
-			}
-		
+		}
+
 		if (mode.equals("delete")) {
 			// // tra ve id da chon o checkbox 22022,22023
 			String strList = req.getParameter("listDelete");
@@ -101,19 +115,6 @@ public class Search extends HttpServlet {
 			resp.sendRedirect("Search");
 		}
 		if (mode.equals("addnew")) {
-			MSTCUSTOMER mstcustomer = new MSTCUSTOMER() {
-			};
-			String cusname = req.getParameter("txtCustomer_name");
-			String cussex = req.getParameter("txtSex");
-			String cusbirth = req.getParameter("txtBirthday");
-			String cusemail = req.getParameter("txtEmail");
-			String cusaddress = req.getParameter("txtAddress");
-
-			System.out.println(mstcustomer.toString());
-			if (MSTCUSTOMER_DAO.AddNew(mstcustomer)) {
-				System.out.println("OKKK");
-			}
-			// resp.sendRedirect("Edit");
 			myRD = req.getRequestDispatcher(Constants.T003_EDIT);
 			myRD.forward(req, resp);
 		}
