@@ -1,0 +1,45 @@
+Utils
+package fjs.cs.common;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Utils {
+
+	public static String nullToBlank(Object c) {
+		if (null == c) {
+			return "";
+		}
+		return c.toString();
+	}
+
+	// chuyen tu mot chuoi sang mot ngay tra ve mot ngay
+	public static Date stringToDate(String s) {
+		try {
+			SimpleDateFormat date1 = new SimpleDateFormat("yyyy/MM/dd");
+			return (Date) date1.parse(s);
+		} catch (Exception e) {
+			return new Date();
+		}
+	}
+
+	// chuyen tu ngay sang chuoi tra ve mot chuoi
+	public static String dateToString(Date d) {
+		SimpleDateFormat date1 = new SimpleDateFormat("yyyy/MM/dd");
+		return date1.format(d);
+	}
+	
+	
+	public static void main(String[] args) {
+		String sDate1 = "2018-09-04";
+		Date ddate1 = new Date();
+		System.out.println("tu chuoi " + sDate1 + " sang ngay: "
+				+ stringToDate("2018-09-04"));
+//		// System.out.println(dateToString("b"+sDate1));
+//
+		System.out.println("tu ngay " + ddate1 + " sang chuoi: "
+				+ dateToString(ddate1));
+//		System.out.println(ddate1);
+//		System.out.println(dateTodateformat(ddate1));
+	}
+}
