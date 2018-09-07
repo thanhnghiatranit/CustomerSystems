@@ -1,0 +1,117 @@
+	public static ArrayList<MSTCUSTOMER> getSearch(String cusname,
+			String cussex, String cusbirthdayFrom, String cusbirthdayTo, int start, int end) {
+		Connection conn = JdbcSQLServerConnection.getConnection();
+		ArrayList<MSTCUSTOMER> list = new ArrayList<MSTCUSTOMER>();
+		try {
+			StringBuilder sql = new StringBuilder();
+
+			// search all
+			sql.append("SELECT * FROM MSTCUSTOMER WHERE 1 = 1 ");
+			// 1. search co ten
+			if (!"".equals(cusname)) {
+				sql.append("AND CUSTOMER_NAME LIKE ? ");
+				// 2. dieu kien ko ten "", co gioi tinh
+			} else if ("".equals(cusname) && !"".equals(cussex)) {
+				sql.append("AND  SEX = ? ");
+			}
+			// 3. dieu kien ko ten, ko gioi tinh, co birthdayfrom co birthto
+			else if ("".equals(cusname) && "".equals(cussex)
+					&& !"".equals(cusbirthdayFrom) && !"".equals(cusbirthdayTo)) {
+				sql.append("AND  BIRTHDAY >= ? AND BIRTHDAY <= ?  ");
+			}
+			// 4. dieu kien co ten va co gioi tinh
+			else if (!"".equals(cusname) && !"".equals(cussex)) {
+				sql.append("AND CUSTOMER_NAME LIKE ? AND SEX = ? ");
+			}
+			// .5 dieu kien co gioi tinh, co birthdayfrom
+			else if (!"".equals(cussex) && !"".equals(cusbirthdayFrom)
+					&& "".equals(cusbirthdayTo)) {
+				sql.append("AND  SEX = ? AND BIRTHDAY >= ? AND BIRTHDAY <= ?  ");
+			}
+			// 6. dieu kien co ten, co gioi tinh, co birthfrom, co birthto
+			else if (!"".equals(cusname) && !"".equals(cussex)
+					&& !"".equals(cusbirthdayFrom) && !"".equals(cusbirthdayTo)) {
+				sql.append("AND CUSTOMER_NAME LIKE ? AND SEX = ? AND BIRTHDAY >= ? AND BIRTHDAY <= ? ");
+			}
+			sql.append(" ORDER BY CUSTOMER_ID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+			PreparedStatement ps = (PreparedStatement) conn
+					.prepareStatement(sql.toString());
+			// 1. kq co ten
+			if (!"".equals(cusname)) {
+				ps.setString(1, "%" + cusname + "%");
+				ps.setInt(2, start);
+				ps.setInt(3, end);
+			}
+			// 2. kq ko ten, co gioi tinh
+			else if ("".equals(cusname) && !"".equals(cussex)) {
+				ps.setString(1, cussex);
+				ps.setInt(2, start);
+				ps.setInt(3, end);
+			}
+			// 3. kq ko ten, ko gioi tinh, co birthday
+			else if ("".equals(cusname) && "".equals(cussex)
+					&& !"".equals(cusbirthdayFrom) && !"".equals(cusbirthdayTo)) {
+				ps.setString(1, cusbirthdayFrom);
+				ps.setString(2, cusbirthdayTo);
+				ps.setInt(3, start);
+				ps.setInt(4, end);
+			}
+			// 4. kq co ten, co gioi tinh
+			else if (!"".equals(cusname) && !"".equals(cussex)) {
+				ps.setString(1, "%" + cusname + "%");
+				ps.setString(2, cussex);
+				ps.setInt(3, start);
+				ps.setInt(4, end);
+			}
+			// 5. kq co gioi tinh, co birthdayfrom
+			else if (!"".equals(cussex) && !"".equals(cusbirthdayFrom)
+					&& (!"".equals(cusbirthdayTo))) {
+				ps.setString(1, cussex);
+				ps.setString(2, cusbirthdayFrom);
+				ps.setString(3, cusbirthdayTo);
+				ps.setInt(4, start);
+				ps.setInt(5, end);
+			}
+			// 6. kq co ten, co gioi tinh, co birthdayfrom, co birthdayto
+			else if ((!"".equals(cusname)) && (!"".equals(cussex))
+					&& (!"".equals(cusbirthdayFrom))
+					&& (!"".equals(cusbirthdayTo))) {
+				ps.setString(1, "%" + cusname + "%");
+				ps.setString(2, cussex);
+				ps.setString(3, cusbirthdayFrom);
+				ps.setString(4, cusbirthdayTo);
+				ps.setInt(5, start);
+				ps.setInt(6, end);
+			} else {
+
+				ps.setInt(1, start);
+				ps.setInt(2, end);
+			}
+
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				MSTCUSTOMER mstcustomer = new MSTCUSTOMER() {
+				};
+				mstcustomer.setCustomer_ID((rs.getString("CUSTOMER_ID")));
+				mstcustomer.setCustomer_Name(rs.getString("CUSTOMER_NAME"));
+				mstcustomer.setSex(rs.getString("SEX"));
+				mstcustomer.setBirthday(rs.getString("BIRTHDAY"));
+				mstcustomer.setEmail(rs.getString("EMAIL"));
+				mstcustomer.setAddress(rs.getString("ADDRESS"));
+				mstcustomer.setDelete_YMD(rs.getDate("DELETE_YMD"));
+				mstcustomer.setInsert_YMD(rs.getDate("INSERT_YMD"));
+				mstcustomer.setUpdate_YMD(rs.getDate("UPDATE_YMD"));
+				list.add(mstcustomer);
+
+			}
+
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+
+
+	}
